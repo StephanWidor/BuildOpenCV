@@ -52,7 +52,7 @@ endif()
 set(OpenCV_STATIC ON)
 find_package(OpenCV ${OPENCV_VERSION} REQUIRED)
 add_library(${PROJECT_NAME} STATIC dummy.cpp)
-target_include_directories(${PROJECT_NAME} PUBLIC "${OPENCV_PLATFORM_INSTALL_PATH}/include/opencv4")
+target_include_directories(${PROJECT_NAME} PUBLIC "${OpenCV_INCLUDE_DIRS}")
 target_link_libraries(${PROJECT_NAME}
    PUBLIC
    ${OpenCV_LIBS}
