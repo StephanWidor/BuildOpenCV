@@ -1,6 +1,5 @@
 set(OPENCV_BUILD_PLATFORM win)
 set(OPENCV_PLATFORM_INSTALL_PATH "${OPENCV_INSTALL_PATH}/${OPENCV_BUILD_PLATFORM}")
-set(OpenCV_DIR "${OPENCV_PLATFORM_INSTALL_PATH}")
 
 function(build_opencv)
     execute_process(
@@ -30,3 +29,7 @@ function(build_opencv)
         WORKING_DIRECTORY "${OCV_BUILD_DIR}"
         )
 endfunction()
+
+macro(set_ocv_dir)
+    set(OpenCV_DIR "${OPENCV_PLATFORM_INSTALL_PATH}")
+endmacro()

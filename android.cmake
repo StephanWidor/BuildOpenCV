@@ -4,7 +4,6 @@ set(NDK_BIN_PATH "${NDK_PATH}/toolchains/llvm/prebuilt/linux-x86_64/bin" CACHE P
 
 set(OPENCV_BUILD_PLATFORM android)
 set(OPENCV_PLATFORM_INSTALL_PATH "${OPENCV_INSTALL_PATH}/${OPENCV_BUILD_PLATFORM}")
-set(OpenCV_DIR "${OPENCV_PLATFORM_INSTALL_PATH}/sdk/native/jni")
 set(ABIS_TO_BUILD "armeabi-v7a;arm64-v8a;x86;x86_64")
 
 function(make_abi ABI)
@@ -61,3 +60,7 @@ function(build_opencv)
         make_abi(${ABI})
     endforeach()
 endfunction()
+
+macro(set_ocv_dir)
+    set(OpenCV_DIR "${OPENCV_PLATFORM_INSTALL_PATH}/sdk/native/jni")
+endmacro()
