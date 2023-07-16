@@ -51,6 +51,13 @@ if(NOT EXISTS "${OPENCV_PLATFORM_INSTALL_PATH}")
 endif()
 set_ocv_dir()
 set(OpenCV_STATIC ON)
+
+if(UNIX AND NOT ANDROID AND NOT APPLE)
+    find_package(OpenEXR REQUIRED)
+    find_package(Iconv REQUIRED)
+endif()
+
+
 find_package(OpenCV ${OPENCV_VERSION} REQUIRED)
 add_library(${PROJECT_NAME} STATIC dummy.cpp)
 target_include_directories(${PROJECT_NAME} PUBLIC "${OpenCV_INCLUDE_DIRS}")
