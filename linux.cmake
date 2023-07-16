@@ -23,11 +23,11 @@ function(build_opencv)
         WORKING_DIRECTORY "${OCV_BUILD_DIR}"
         )
     execute_process(
-        COMMAND bash -c "make -j$(nproc)"
+        COMMAND ${CMAKE_COMMAND} --build .
         WORKING_DIRECTORY "${OCV_BUILD_DIR}"
         )
     execute_process(
-        COMMAND bash -c "make install"
+        COMMAND ${CMAKE_COMMAND} --install .
         WORKING_DIRECTORY "${OCV_BUILD_DIR}"
         )
 endfunction()
