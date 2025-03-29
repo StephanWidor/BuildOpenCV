@@ -1,67 +1,49 @@
-cmake_minimum_required(VERSION 3.16)
-project(OpenCV LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+cmake_minimum_required(VERSION 3.25)
+project(BuildOpenCV LANGUAGES CXX)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(OPENCV_VERSION 4.8.0 CACHE STRING "")
+option(FORCE_RELEASE_BUILD "Force a release build, even if parent is a debug build" ON)
 
-find_package(Git REQUIRED)
-
-set(OPENCV_INSTALL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/OpenCV-${OPENCV_VERSION}")
-set(OCV_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/opencv/build")
-set(OCV_CONTRIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/opencv_contrib/modules")
-if(ANDROID)
-    include(android.cmake)
-elseif(APPLE)
-    include(macos.cmake)
-elseif(UNIX)
-    include(linux.cmake)
-elseif(WIN32)
-    include(win.cmake)
+if(FORCE_RELEASE_BUILD)
+    set(OCV_BUILD_TYPE Release)
+else()
+    set(OCV_BUILD_TYPE ${CMAKE_BUILD_TYPE})
 endif()
 
-function(ocv_checkout OCV_BRANCH)
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} checkout ${OCV_BRANCH}
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/opencv"
-        )
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} checkout ${OCV_BRANCH}
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/opencv_contrib"
-        )
-endfunction()
+add_library(${PROJECT_NAME} STATIC dummy.cpp)
 
-if(NOT EXISTS "${OPENCV_PLATFORM_INSTALL_PATH}")
-    message("Need to build OpenCV for ${OPENCV_BUILD_PLATFORM}")
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-        )
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} name-rev --name-only HEAD
-        OUTPUT_VARIABLE FORMER_OPENCV_BRANCH
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/opencv"
-        )
-    ocv_checkout(${OPENCV_VERSION})
-    if(EXISTS ${OCV_BUILD_DIR})
-        file(REMOVE_RECURSE ${OCV_BUILD_DIR})
-    endif()
-    file(MAKE_DIRECTORY ${OCV_BUILD_DIR})
-    build_opencv()
-endif()
-set_ocv_dir()
+set(OCV_VERSION_TO_USE "4.11.0")
+find_package(OpenCV)
+
 set(OpenCV_STATIC ON)
 
-if(UNIX AND NOT ANDROID AND NOT APPLE)
-    find_package(OpenEXR REQUIRED)
-    find_package(Iconv REQUIRED)
+if(OpenCV_FOUND)
+    if(${OpenCV_VERSION} STREQUAL ${OCV_VERSION_TO_USE})
+        set(USE_SYSTEM_OCV ON)
+    endif()
 endif()
 
+if(USE_SYSTEM_OCV)
+    message("Found OpenCV ${OpenCV_VERSION} on system, will use that")
+else()
+    message("Did not find OpenCV on system, will have to download and build it")
+    
+    include(common.cmake)
+    clone_ocv()
+    prepare_folders()
+    
+    if(ANDROID)
+        include(android.cmake)
+    elseif(APPLE)
+        include(macos.cmake)
+    elseif(UNIX)
+        include(linux.cmake)
+    elseif(WIN32)
+        include(win.cmake)
+    endif()
+    
+    build_ocv()
+    find_ocv()
+endif()
 
-find_package(OpenCV ${OPENCV_VERSION} REQUIRED)
-add_library(${PROJECT_NAME} STATIC dummy.cpp)
-target_include_directories(${PROJECT_NAME} PUBLIC "${OpenCV_INCLUDE_DIRS}")
-target_link_libraries(${PROJECT_NAME}
-   PUBLIC
-   ${OpenCV_LIBS}
-   )
+target_link_libraries(${PROJECT_NAME} INTERFACE ${OpenCV_LIBS})    
