@@ -13,7 +13,7 @@ endif()
 add_library(${PROJECT_NAME} STATIC dummy.cpp)
 
 set(OCV_VERSION_TO_USE "4.11.0")
-find_package(OpenCV)
+find_package(OpenCV QUIET)
 
 set(OpenCV_STATIC ON)
 
