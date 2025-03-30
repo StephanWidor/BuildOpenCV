@@ -1,4 +1,8 @@
 function(build_ocv)
+    if(${ANDROID_ABI} STREQUAL "x86")
+        set(WITH_IPP OFF)   # doesn't seem to work on x86
+    endif()
+
     execute_process(
         COMMAND ${CMAKE_COMMAND}
             -B${OCV_BUILD_DIR}
@@ -28,6 +32,7 @@ function(build_ocv)
             -DBUILD_opencv_python3=OFF
             -DOPENCV_EXTRA_MODULES_PATH='${OCV_CONTRIB_DIR}/modules'
             -DCMAKE_COLOR_DIAGNOSTICS=ON
+            -DWITH_IPP=${WITH_IPP}
             .
         WORKING_DIRECTORY "${OCV_DIR}"
     )
