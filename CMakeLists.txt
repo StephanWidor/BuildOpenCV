@@ -2,13 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 project(BuildOpenCV LANGUAGES CXX)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-option(FORCE_RELEASE_BUILD "Force a release build, even if parent is a debug build" ON)
-
-if(FORCE_RELEASE_BUILD)
-    set(OCV_BUILD_TYPE Release)
-else()
-    set(OCV_BUILD_TYPE ${CMAKE_BUILD_TYPE})
-endif()
+option(OCV_FORCE_RELEASE_BUILD "Force a release build, even if parent is a debug build" ON)
 
 add_library(${PROJECT_NAME} STATIC dummy.cpp)
 
@@ -28,6 +22,14 @@ if(USE_SYSTEM_OCV)
 else()
     message("Did not find OpenCV on system, will have to download and build it")
     
+    if(OCV_FORCE_RELEASE_BUILD)
+        message("Forcing Release build of OpenCV")
+        set(OCV_BUILD_TYPE Release)
+    else()
+        message("Setting OpenCV build type to ${CMAKE_BUILD_TYPE}")
+        set(OCV_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+    endif()
+
     include(common.cmake)
     clone_ocv()
     prepare_folders()
