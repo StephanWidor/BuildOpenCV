@@ -48,6 +48,6 @@ endfunction()
 
 macro(find_ocv)
     set(OpenCV_DIR "${OCV_INSTALL_DIR}/sdk/native/jni")
+    find_package(OpenCV REQUIRED PATHS "${OpenCV_DIR}" NO_DEFAULT_PATH)
     find_package(Iconv REQUIRED)
-    find_package(OpenCV REQUIRED)
 endmacro()

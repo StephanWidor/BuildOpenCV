@@ -33,5 +33,5 @@ endfunction()
 
 macro(find_ocv)
     set(OpenCV_DIR "${OCV_INSTALL_DIR}")
-    find_package(OpenCV REQUIRED)
+    find_package(OpenCV REQUIRED PATHS "${OCV_INSTALL_DIR}")
 endmacro()

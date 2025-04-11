@@ -36,8 +36,8 @@ macro(find_ocv)
     elseif(EXISTS "${OCV_INSTALL_DIR}/lib64/cmake/opencv4")
         set(OpenCV_DIR "${OCV_INSTALL_DIR}/lib64/cmake/opencv4")
     endif()
-    
-    find_package(OpenCV REQUIRED)
+
+    find_package(OpenCV REQUIRED PATHS "${OpenCV_DIR}" NO_DEFAULT_PATH)
     find_package(OpenEXR REQUIRED)
     find_package(Iconv REQUIRED)
 endmacro()
