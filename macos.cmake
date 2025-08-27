@@ -18,7 +18,7 @@ function(build_ocv)
             -DOPENCV_EXTRA_MODULES_PATH='${OCV_CONTRIB_DIR}/modules'
             -DCMAKE_COLOR_DIAGNOSTICS=ON
             .
-        WORKING_DIRECTORY "${OCV_BUILD_DIR}"
+        WORKING_DIRECTORY "${OCV_DIR}"
     )
     execute_process(
         COMMAND ${CMAKE_COMMAND} --build . -j
@@ -33,4 +33,5 @@ endfunction()
 macro(find_ocv)
     set(OpenCV_DIR "${OCV_INSTALL_DIR}/lib/cmake/opencv4")
     find_package(OpenCV REQUIRED PATHS "${OpenCV_DIR}" NO_DEFAULT_PATH)
+    find_package(Iconv REQUIRED)
 endmacro()
